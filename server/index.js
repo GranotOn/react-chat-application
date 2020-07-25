@@ -7,7 +7,7 @@ const router = require("./router");
 const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
-const cors = require('cors');
+const cors = require("cors");
 
 /* Socket Io & Express config */
 const app = express();
@@ -42,10 +42,12 @@ io.on("connection", (socket) => {
   });
   //Disconnection
   socket.on("disconnect", () => {
-    const user = getUser(socket.id);
-    socket
-      .to(user.room)
-      .emit("message", { user: "admin", text: ` ${user.name} disconnected` });
+    const user = removeUser(socket.id);
+    if (user) {
+      socket
+        .to(user.room)
+        .emit("message", { user: "admin", text: ` ${user.name} disconnected` });
+    }
   });
 });
 
